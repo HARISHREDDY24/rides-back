@@ -1,4 +1,4 @@
-package service;
+package org.example.rideshare.service;
 
 import org.example.rideshare.model.Ride;
 import org.example.rideshare.repository.RideRepository;
@@ -8,7 +8,9 @@ import java.util.List;
 
 @Service
 public class RideService {
-    @Autowired private RideRepository rideRepository;
+
+    @Autowired
+    private RideRepository rideRepository;
 
     public Ride createRide(Ride ride) {
         ride.setStatus("REQUESTED");
@@ -24,8 +26,12 @@ public class RideService {
     }
 
     public Ride acceptRide(String rideId, String driverId) {
-        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
-        if (!"REQUESTED".equals(ride.getStatus())) throw new RuntimeException("Ride already taken");
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        if (!"REQUESTED".equals(ride.getStatus())) {
+            throw new RuntimeException("Ride already taken");
+        }
 
         ride.setDriverId(driverId);
         ride.setStatus("ACCEPTED");
@@ -33,8 +39,12 @@ public class RideService {
     }
 
     public Ride completeRide(String rideId) {
-        Ride ride = rideRepository.findById(rideId).orElseThrow(() -> new RuntimeException("Ride not found"));
-        if (!"ACCEPTED".equals(ride.getStatus())) throw new RuntimeException("Ride not active");
+        Ride ride = rideRepository.findById(rideId)
+                .orElseThrow(() -> new RuntimeException("Ride not found"));
+
+        if (!"ACCEPTED".equals(ride.getStatus())) {
+            throw new RuntimeException("Ride not active");
+        }
 
         ride.setStatus("COMPLETED");
         return rideRepository.save(ride);

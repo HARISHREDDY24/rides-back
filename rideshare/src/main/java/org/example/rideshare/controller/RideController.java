@@ -1,4 +1,16 @@
-package controller;
+package org.example.rideshare.controller;
+
+import jakarta.validation.Valid;
+import org.example.rideshare.dto.RideRequest;
+import org.example.rideshare.model.Ride;
+import org.example.rideshare.model.User;
+import org.example.rideshare.repository.UserRepository;
+import org.example.rideshare.service.RideService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*; // <--- This fixes the RestController error
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -6,10 +18,11 @@ public class RideController {
     @Autowired private RideService rideService;
     @Autowired private UserRepository userRepository;
 
-    // Helper to get current user ID from SecurityContext (simplified)
+    // Helper to get current user ID from SecurityContext
     private User getCurrentUser(Authentication authentication) {
         String username = authentication.getName();
-        return userRepository.findByUsername(username).orElseThrow();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     // 1. Create Ride (Passenger)
@@ -40,7 +53,6 @@ public class RideController {
     @PostMapping("/driver/rides/{id}/accept")
     public Ride acceptRide(@PathVariable String id, Authentication auth) {
         User driver = getCurrentUser(auth);
-        // Check if role is DRIVER if not checked by SecurityConfig
         return rideService.acceptRide(id, driver.getId());
     }
 

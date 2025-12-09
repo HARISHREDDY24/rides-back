@@ -1,8 +1,10 @@
-package util;
+package org.example.rideshare.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
 
@@ -22,7 +24,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Helper to validate token (optional for simple login, but good to have)
     public String extractUsername(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
     }
